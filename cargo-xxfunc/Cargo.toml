@@ -1,5 +1,5 @@
 [package]
-name = "xxfunc-core"
+name = "cargo-xxfunc"
 version.workspace = true
 publish.workspace = true
 edition.workspace = true

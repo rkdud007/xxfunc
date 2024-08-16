@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["core", "runtime", "xxfunc"]
+members = ["runtime", "cargo-xxfunc", "xxfunc"]
 
 [workspace.package]
 version = "0.0.0"
