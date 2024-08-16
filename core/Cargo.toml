@@ -1,5 +1,5 @@
 [package]
-name = "reth"
+name = "xxfunc-core"
 version.workspace = true
 publish.workspace = true
 edition.workspace = true

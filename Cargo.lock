@@ -3,9 +3,9 @@
 version = 3
 
 [[package]]
-name = "reth"
+name = "xxfunc"
 version = "0.0.0"
 
 [[package]]
-name = "xxfunc"
+name = "xxfunc-core"
 version = "0.0.0"
