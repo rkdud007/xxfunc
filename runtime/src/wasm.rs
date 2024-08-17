@@ -9,7 +9,7 @@ type NotificationParams = (i64, i64);
 type NotificationReturn = i64;
 
 pub struct ModuleRunner {
-    engine: Engine,
+    pub(crate) engine: Engine,
     linker: Linker<WasiCtx>,
 }
 

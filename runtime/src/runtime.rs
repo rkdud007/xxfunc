@@ -1,15 +1,32 @@
 use std::{collections::VecDeque, sync::Arc, thread::Thread};
 
 use eyre::Result;
+use futures::channel::oneshot;
 use parking_lot::Mutex;
 use std::thread;
+use wasmtime::Module;
 use xxfunc_db::ModuleDatabase;
 
 use crate::wasm::ModuleRunner;
 
+#[derive(Debug)]
+pub struct JoinHandle<T>(oneshot::Receiver<T>);
+
+impl<T> std::future::Future for JoinHandle<T> {
+    type Output = Result<T, oneshot::Canceled>;
+
+    fn poll(
+        mut self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+        std::pin::Pin::new(&mut self.0).poll(cx)
+    }
+}
+
 struct Task {
     module_id: usize,
     exex_notification: Arc<()>,
+    result_sender: oneshot::Sender<()>,
 }
 
 pub struct Runtime {
@@ -42,17 +59,24 @@ impl Runtime {
 
             thread::spawn(move || {
                 loop {
-                    // 1. take
                     if let Some(task) = inner.tasks.lock().pop_front() {
-                        // perform task until completion
+                        // get module from db
+                        let bytes = inner.module_db.get("<ID HERE>").unwrap().unwrap();
 
-                        // 2. get the appropriate module from the database
-                        // 3. instantiate the module
+                        // deserialize module
+                        let engine = &inner.runner.engine;
+                        let module = unsafe { Module::deserialize(engine, bytes).unwrap() };
+
+                        // execute
+                        let _ = inner.runner.execute(module, ()).unwrap();
+
+                        task.result_sender.send(()).unwrap();
                     } else {
                         break;
                     }
                 }
 
+                // park thread if no tasks
                 let handle = thread::current();
                 inner.workers.lock().push(handle);
                 thread::park();
@@ -62,7 +86,18 @@ impl Runtime {
         Ok(Self { inner })
     }
 
-    fn spawn(&self, module_id: usize, exex_notification: Arc<()>) {}
+    pub async fn spawn(&self, module_id: usize, exex_notification: Arc<()>) -> JoinHandle<()> {
+        let (tx, rx) = oneshot::channel::<()>();
+
+        // create task
+        let task = Task { module_id, exex_notification, result_sender: tx };
+        self.inner.tasks.lock().push_back(task);
+
+        // wake up available worker
+        self.wake();
+
+        JoinHandle(rx)
+    }
 
     fn wake(&self) {
         if let Some(worker) = self.inner.workers.lock().pop() {
