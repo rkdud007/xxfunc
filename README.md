@@ -8,20 +8,20 @@ terminal 1 (server)
 RUST_LOG=info cargo run -p server
 ```
 
-terminal 2 (reth + scheduler)
-
-```
-ETHERSCAN_API_KEY={ETHERSCAN_API_KEY} cargo run -p xxfunc-exex -- node --debug.etherscan --chain holesky --http 
-```
-
-terminal 3 (user)
+terminal 2 (user)
 
 build -> deploy -> start
 
 ```
 cargo xxfunc build
 cargo xxfunc deploy --url http://0.0.0.0:3000 --wasm-path ./wasm_output/output.wasm
-cargo xxfunc start --url http://0.0.0.0:3000 --module-name output
+cargo xxfunc start --url http://0.0.0.0:3000 --module-name output.wasm
+```
+
+terminal 3 (reth + scheduler)
+
+```
+ETHERSCAN_API_KEY={ETHERSCAN_API_KEY} cargo run -p xxfunc-exex -- node --debug.etherscan --chain holesky --http 
 ```
 
 ## Build and Run wasm module

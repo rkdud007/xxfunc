@@ -51,13 +51,11 @@ async fn start(
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
     info!("Starting module: {}", info.module);
-    match module_db.set_state(&info.module, ModuleState::Started) {
-        Ok(()) => Ok(format!("Module '{}' started successfully", info.module)),
-        Err(_) => {
-            error!("Module '{}' not found", info.module);
-            Err(StatusCode::NOT_FOUND)
-        }
-    }
+    module_db
+        .set_state(&info.module, ModuleState::Started)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    info!("Module '{}' started successfully", info.module);
+    Ok(info.module)
 }
 
 #[tokio::main]
