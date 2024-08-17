@@ -72,9 +72,15 @@ impl Runtime {
 
                         // execute the module on the tokio runtime because it's async
                         let func = inner.runner.execute(module, ());
-                        let _ = inner.tokio_runtime.spawn(async move {
-                            let module_id = task.module_id;
-                            info!(%module_id, "Executing module");
+
+                        // let _ = inner.tokio_runtime.spawn(async move {
+                        //     let res = func.await;
+                        //     task.result_sender.send(res);
+                        // });
+
+                        let module_id = task.module_id;
+                        inner.tokio_runtime.block_on(async move {
+                            info!(%module_id, "Executing module.");
                             let res = func.await;
                             task.result_sender.send(res);
                         });
