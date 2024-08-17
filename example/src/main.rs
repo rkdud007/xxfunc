@@ -2,5 +2,5 @@
 
 #[xxfunc::main]
 async fn main(data: &[u8]) {
-    println!("Hello, world!, data length: {}", data.len());
+    println!("🦀 Hello, world from wasi!, exex notification data length: {}", data.len());
 }
