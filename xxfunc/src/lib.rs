@@ -5,7 +5,7 @@ use syn::{parse_macro_input, ItemFn};
 mod xxfunc_proc;
 
 #[proc_macro_attribute]
-pub fn xxfunc(_attr: TokenStream, input: TokenStream) -> TokenStream {
+pub fn main(_attr: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as ItemFn);
     xxfunc_proc(input).into()
 }

@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
-members = ["runtime", "cargo-xxfunc", "xxfunc", "db", "runtime/tests/wasm-exex"]
+members = ["runtime", "xxfunc-core", "xxfunc", "db", "runtime/tests/wasm-exex"]
+exclude = ["example"]
 
 [workspace.package]
 version = "0.0.0"
@@ -11,6 +12,8 @@ license = "MIT OR Apache-2.0"
 [workspace.dependencies]
 xxfunc-db = { path = "db" }
 xxfunc-runtime = { path = "runtime" }
+xxfunc = { path = "xxfunc" }
+xxfunc-core = { path = "xxfunc-core" }
 
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
 	"serde",
