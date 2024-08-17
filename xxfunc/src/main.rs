@@ -2,16 +2,11 @@ use clap::{Parser, Subcommand};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use toml::Value;
 
 #[derive(Parser)]
-#[clap(bin_name = "cargo")]
-enum Cli {
-    Xxfunc(XxfuncArgs),
-}
-
-#[derive(Parser)]
-#[clap(about = "xxfunc build tools")]
-struct XxfuncArgs {
+#[clap(name = "cargo-xxfunc")]
+struct Cli {
     #[clap(subcommand)]
     command: XxfuncCommand,
 }
@@ -29,7 +24,7 @@ struct BuildArgs {
 }
 
 fn main() {
-    let Cli::Xxfunc(args) = Cli::parse();
+    let args = Cli::parse();
 
     match args.command {
         XxfuncCommand::Build(build_args) => build(build_args.release),
@@ -58,7 +53,8 @@ fn build(release: bool) {
     } else {
         Path::new("target/wasm32-wasi/debug")
     };
-    let wasm_file = target_dir.join("your_project_name.wasm");
+    let project_name = get_project_name().expect("Failed to get project name");
+    let wasm_file = target_dir.join(format!("{}.wasm", project_name));
     let dest_dir = Path::new("wasm_output");
 
     fs::create_dir_all(dest_dir).expect("Failed to create destination directory");
@@ -78,4 +74,23 @@ fn generate_interface_file(dest_dir: &Path) {
 
     fs::write(dest_dir.join("interface.d.ts"), interface_content)
         .expect("Failed to write interface file");
+}
+
+fn get_project_name() -> Result<String, Box<dyn std::error::Error>> {
+    let cargo_toml = fs::read_to_string("Cargo.toml")?;
+    let cargo_toml: Value = toml::from_str(&cargo_toml)?;
+
+    let package = cargo_toml
+        .get("package")
+        .ok_or("No [package] section in Cargo.toml")?
+        .as_table()
+        .ok_or("[package] is not a table")?;
+
+    let name = package
+        .get("name")
+        .ok_or("No name field in [package]")?
+        .as_str()
+        .ok_or("name is not a string")?;
+
+    Ok(name.to_string())
 }
