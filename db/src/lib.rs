@@ -5,6 +5,8 @@ use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use rusqlite::params;
 
+pub type ModuleId = i64;
+
 // Enum to represent module states
 #[derive(Debug, Clone, Copy)]
 pub enum ModuleState {
@@ -57,11 +59,11 @@ impl ModuleDatabase {
         Ok(())
     }
 
-    pub fn get(&self, name: &str) -> Result<Option<Vec<u8>>> {
+    pub fn get(&self, id: ModuleId) -> Result<Option<Vec<u8>>> {
         let conn = self.pool.get()?;
 
-        let mut stmt = conn.prepare("SELECT binary FROM modules WHERE name = ?1")?;
-        let mut rows = stmt.query(rusqlite::params![name])?;
+        let mut stmt = conn.prepare("SELECT binary FROM modules WHERE id = ?1")?;
+        let mut rows = stmt.query(rusqlite::params![id])?;
 
         if let Some(row) = rows.next()? {
             let binary: Vec<u8> = row.get(0)?;
@@ -99,7 +101,7 @@ impl ModuleDatabase {
     }
 
     // return a list of modules with the specified state
-    pub fn get_modules_by_state(&self, state: ModuleState) -> Result<Vec<i64>> {
+    pub fn get_modules_by_state(&self, state: ModuleState) -> Result<Vec<ModuleId>> {
         let conn = self.pool.get()?;
         let mut stmt = conn.prepare(
             "SELECT module_id

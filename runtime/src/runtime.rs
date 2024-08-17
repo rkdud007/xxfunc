@@ -5,7 +5,7 @@ use futures::channel::oneshot;
 use parking_lot::Mutex;
 use std::thread;
 use wasmtime::Module;
-use xxfunc_db::ModuleDatabase;
+use xxfunc_db::{ModuleDatabase, ModuleId};
 
 use crate::wasm::ModuleRunner;
 
@@ -24,7 +24,7 @@ impl<T> std::future::Future for JoinHandle<T> {
 }
 
 struct Task {
-    module_id: usize,
+    module_id: ModuleId,
     exex_notification: Arc<()>,
     result_sender: oneshot::Sender<()>,
 }
@@ -61,7 +61,7 @@ impl Runtime {
                 loop {
                     if let Some(task) = inner.tasks.lock().pop_front() {
                         // get module from db
-                        let bytes = inner.module_db.get("<ID HERE>").unwrap().unwrap();
+                        let bytes = inner.module_db.get(task.module_id).unwrap().unwrap();
 
                         // deserialize module
                         let engine = inner.runner.engine();
@@ -86,7 +86,7 @@ impl Runtime {
         Ok(Self { inner })
     }
 
-    pub async fn spawn(&self, module_id: usize, exex_notification: Arc<()>) -> JoinHandle<()> {
+    pub async fn spawn(&self, module_id: ModuleId, exex_notification: Arc<()>) -> JoinHandle<()> {
         let (tx, rx) = oneshot::channel::<()>();
 
         // create task
