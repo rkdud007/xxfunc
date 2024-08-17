@@ -82,7 +82,7 @@ impl Runtime {
                         inner.tokio_runtime.block_on(async move {
                             info!(%module_id, "Executing module.");
                             let res = func.await;
-                            task.result_sender.send(res);
+                            let _ = task.result_sender.send(res);
                         });
                     } else {
                         break;

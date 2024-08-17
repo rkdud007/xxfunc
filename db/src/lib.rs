@@ -1,4 +1,7 @@
-use std::{fs::File, path::Path};
+use std::{
+    fs::{File, OpenOptions},
+    path::Path,
+};
 
 use eyre::Result;
 use r2d2::Pool;
@@ -23,7 +26,9 @@ pub struct ModuleDatabase {
 
 impl ModuleDatabase {
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        File::create(&path).expect("Failed to create database file");
+        // File::create(&path).expect("Failed to create database file");
+        let _ = OpenOptions::new().read(true).write(true).create(true).open(&path)?;
+
         let manager =
             SqliteConnectionManager::file(path).with_flags(OpenFlags::SQLITE_OPEN_READ_WRITE);
         let pool = Pool::new(manager)?;
