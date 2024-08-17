@@ -10575,7 +10575,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "xxfunc-core"
+name = "xxfunc-db"
+version = "0.0.0"
+dependencies = [
+ "eyre",
+ "r2d2",
+ "r2d2_sqlite",
+ "rusqlite",
+]
+
+[[package]]
+name = "xxfunc-exex"
 version = "0.0.0"
 dependencies = [
  "async-trait",
@@ -10593,16 +10603,6 @@ dependencies = [
  "tokio",
  "xxfunc-db",
  "xxfunc-runtime",
-]
-
-[[package]]
-name = "xxfunc-db"
-version = "0.0.0"
-dependencies = [
- "eyre",
- "r2d2",
- "r2d2_sqlite",
- "rusqlite",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 [package]
-name = "xxfunc-core"
+name = "xxfunc-exex"
 version.workspace = true
 publish.workspace = true
 edition.workspace = true

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["runtime", "xxfunc-core", "xxfunc", "db"]
+members = ["runtime", "exex", "xxfunc", "db"]
 exclude = ["example"]
 
 [workspace.package]
@@ -13,7 +13,7 @@ license = "MIT OR Apache-2.0"
 xxfunc-db = { path = "db" }
 xxfunc-runtime = { path = "runtime" }
 xxfunc = { path = "xxfunc" }
-xxfunc-core = { path = "xxfunc-core" }
+xxfunc-exex = { path = "exex" }
 
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
 	"serde",
