@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
-    "serde",
+	"serde",
 ], rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
 reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
 reth = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
