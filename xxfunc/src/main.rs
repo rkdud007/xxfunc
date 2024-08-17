@@ -60,20 +60,7 @@ fn build(release: bool) {
     fs::create_dir_all(dest_dir).expect("Failed to create destination directory");
     fs::copy(&wasm_file, dest_dir.join("output.wasm")).expect("Failed to copy WASM file");
 
-    // Generate any necessary wrapper or interface files
-    generate_interface_file(dest_dir);
-
     println!("Build completed successfully!");
-}
-
-fn generate_interface_file(dest_dir: &Path) {
-    let interface_content = r#"
-    export function alloc(len: i32): i32;
-    export function main(ptr: i32, len: i32): i64;
-    "#;
-
-    fs::write(dest_dir.join("interface.d.ts"), interface_content)
-        .expect("Failed to write interface file");
 }
 
 fn get_project_name() -> Result<String, Box<dyn std::error::Error>> {
