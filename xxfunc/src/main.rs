@@ -1,7 +1,5 @@
 use clap::{Parser, Subcommand};
-use std::fs;
-use std::path::Path;
-use std::process::Command;
+use std::{fs, path::Path, process::Command};
 use toml::Value;
 
 #[derive(Parser)]
