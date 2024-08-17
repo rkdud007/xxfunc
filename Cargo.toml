@@ -1,6 +1,14 @@
 [workspace]
 resolver = "2"
-members = ["runtime", "exex", "xxfunc", "xxfunc/macro", "db", "cargo-xxfunc"]
+members = [
+	"runtime",
+	"exex",
+	"xxfunc",
+	"xxfunc/macro",
+	"db",
+	"cargo-xxfunc",
+	"server",
+]
 exclude = ["example"]
 
 [workspace.package]

@@ -29,5 +29,5 @@ It will return the function signature.
 Starts the function to be triggered by exex event.
 
 ```console
-cargo xxfunc invoke ---url <url> --function <function-signature>
+cargo xxfunc start ---url <url> --function <function-signature>
 ```
