@@ -16,8 +16,9 @@ pub struct Scheduler<N: FullNodeComponents> {
 
 impl<N: FullNodeComponents> Scheduler<N> {
     pub fn new(exex_ctx: ExExContext<N>) -> Result<Self> {
-        let runtime = Runtime::new()?;
-        let db = ModuleDatabase::open("./")?;
+        let db = ModuleDatabase::open("module.db")?;
+        let runtime = Runtime::new(db.clone())?;
+
         Ok(Self { runtime, exex_ctx, db })
     }
 

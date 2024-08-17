@@ -47,10 +47,8 @@ struct Inner {
 }
 
 impl Runtime {
-    pub fn new() -> Result<Self> {
+    pub fn new(module_db: ModuleDatabase) -> Result<Self> {
         let num_workers = thread::available_parallelism()?.get();
-
-        let module_db = ModuleDatabase::open("./db")?;
         let runner = ModuleRunner::new()?;
         let tasks = Mutex::new(VecDeque::new());
         let workers = Mutex::new(Vec::with_capacity(num_workers));
