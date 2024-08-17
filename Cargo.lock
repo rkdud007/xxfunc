@@ -10985,6 +10985,7 @@ dependencies = [
  "reth-tracing",
  "serde_json",
  "tokio",
+ "tracing",
  "xxfunc-db",
  "xxfunc-runtime",
 ]

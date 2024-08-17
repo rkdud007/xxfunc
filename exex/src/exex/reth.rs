@@ -3,6 +3,7 @@ use std::{sync::Arc, time::Duration};
 use reth_execution_types::Chain;
 use reth_exex::ExExNotification;
 use tokio::{sync::mpsc, time};
+use tracing::info;
 
 use super::{
     rpc::{ExExRpcExt, ExExRpcExtApiServer},
@@ -47,7 +48,7 @@ pub fn init_reth() -> eyre::Result<()> {
                     eprintln!("Failed to send notification: {}", e);
                     break;
                 }
-                println!("Sent mock notification");
+                info!("📢 Sent mock exex notification");
             }
         });
 
