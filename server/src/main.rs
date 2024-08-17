@@ -7,6 +7,7 @@ use axum::{
 use eyre::Result;
 use serde::Deserialize;
 use std::sync::Arc;
+use tracing::{error, info};
 use uuid::Uuid;
 use xxfunc_db::{ModuleDatabase, ModuleState};
 
@@ -23,12 +24,13 @@ async fn deploy(
                 .file_name()
                 .map(|f| f.to_string())
                 .unwrap_or_else(|| format!("{}.wasm", Uuid::new_v4()));
-
+            info!("Received file: {}", file_name);
             let raw_data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?;
 
             module_db
                 .insert(&file_name, &raw_data)
                 .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+            info!("Module '{}' inserted into database", file_name);
         }
     }
 
@@ -48,13 +50,13 @@ async fn start(
     Json(info): Json<StartInfo>,
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
-    println!("Starting module: {}", info.module);
+    info!("Starting module: {}", info.module);
 
     // Here you would typically retrieve the module from the database and execute it
     match module_db.set_state(&info.module, ModuleState::Started) {
         Ok(()) => Ok(format!("Module '{}' started successfully", info.module)),
         Err(_) => {
-            println!("Module '{}' not found", info.module);
+            error!("Module '{}' not found", info.module);
             Err(StatusCode::NOT_FOUND)
         }
     }
@@ -65,6 +67,7 @@ async fn main() -> Result<()> {
     // initialize tracing
     tracing_subscriber::fmt::init();
     let module_db = Arc::new(ModuleDatabase::open("module.db")?);
+    info!("Module database initialized");
 
     let app = Router::new()
         .route(
@@ -85,5 +88,6 @@ async fn main() -> Result<()> {
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
+    info!("Server started on port 3000");
     Ok(())
 }

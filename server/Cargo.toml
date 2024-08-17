@@ -13,3 +13,4 @@ serde = { version = "1", features = ["derive"] }
 xxfunc-db.workspace = true
 eyre.workspace = true
 tracing-subscriber.workspace = true
+tracing.workspace = true

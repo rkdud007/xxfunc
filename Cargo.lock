@@ -8467,6 +8467,7 @@ dependencies = [
  "eyre",
  "serde",
  "tokio",
+ "tracing",
  "tracing-subscriber",
  "uuid",
  "xxfunc-db",

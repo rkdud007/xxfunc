@@ -1,5 +1,7 @@
+use exex::scheduler;
+
 pub mod exex;
 
 fn main() {
-    println!("Hello, world!");
+    exex::reth::init_reth();
 }
