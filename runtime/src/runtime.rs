@@ -4,6 +4,7 @@ use eyre::Result;
 use futures::channel::oneshot;
 use parking_lot::Mutex;
 use std::thread;
+use tracing::info;
 use wasmtime::Module;
 use xxfunc_db::{ModuleDatabase, ModuleId};
 
@@ -71,13 +72,9 @@ impl Runtime {
 
                         // execute the module on the tokio runtime because it's async
                         let func = inner.runner.execute(module, ());
-
-                        // let _ = inner.tokio_runtime.spawn(async move {
-                        //     let res = func.await;
-                        //     task.result_sender.send(res);
-                        // });
-
-                        inner.tokio_runtime.block_on(async move {
+                        let _ = inner.tokio_runtime.spawn(async move {
+                            let module_id = task.module_id;
+                            info!(%module_id, "Executing module");
                             let res = func.await;
                             task.result_sender.send(res);
                         });
