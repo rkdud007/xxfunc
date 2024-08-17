@@ -5,6 +5,10 @@ publish.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[[bin]]
+name = "cargo-xxfunc"
+path = "src/main.rs"
+
 [lib]
 proc-macro = true
 
