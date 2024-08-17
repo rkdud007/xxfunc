@@ -72,16 +72,6 @@ impl Module {
 
         let memory = instance.get_memory(&mut store, "memory").context("failed to get memory")?;
 
-        let func = runner
-            .linker
-            // .module_async(&mut store, "", &module)
-            // .await
-            // .unwrap()
-            // .get_default(&mut store, "")
-            // .unwrap()
-            // .typed::<(), ()>(&store)
-            // .unwrap();
-
         Ok(Self { store, instance, memory })
     }
 

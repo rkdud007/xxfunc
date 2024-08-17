@@ -1,7 +1,9 @@
-use eyre::Result;
 use tokio::sync::mpsc;
 
-use super::rpc::{ExExRpcExt, ExExRpcExtApiServer};
+use super::{
+    rpc::{ExExRpcExt, ExExRpcExtApiServer},
+    scheduler::Scheduler,
+};
 
 pub fn init_reth() -> eyre::Result<()> {
     reth::cli::Cli::parse_args().run(|builder, _| async move {
@@ -13,10 +15,7 @@ pub fn init_reth() -> eyre::Result<()> {
                 ctx.modules.merge_configured(ExExRpcExt { to_exex: rpc_tx }.into_rpc())?;
                 Ok(())
             })
-            .install_exex(
-                "xx",
-                |mut ctx| async move { Result::Ok(async { Result::Ok(()) }) }, // |mut ctx| async move { Ok(WasmExEx::new(ctx, rpc_rx)?.start()) },
-            )
+            .install_exex("xx", |mut ctx| async { Ok(Scheduler::new(ctx)?.start()) })
             .launch()
             .await?;
 
