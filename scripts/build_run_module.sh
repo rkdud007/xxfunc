@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Change to xxfunc directory, install the tool, and return to the original directory
-(cd xxfunc && cargo install -f --path .) || { echo "Failed to install xxfunc"; exit 1; }
+(cd cargo-xxfunc && cargo install -f --path .) || { echo "Failed to install xxfunc"; exit 1; }
 
 # Change to example directory, build the project, and return to the original directory
 (cd example && cargo-xxfunc build --release) || { echo "Failed to build example project"; exit 1; }
