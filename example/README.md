@@ -15,32 +15,37 @@ fn main(data: &[u8]) {
 it will expand into
 
 ```rust
+
 #![feature(prelude_import)]
 #![no_main]
 #[prelude_import]
 use std::prelude::rust_2021::*;
 #[macro_use]
 extern crate std;
+use core::slice;
+use std::sync::Mutex;
+static mut GLOBAL_BUFFER: Vec<u8> = Vec::new();
 #[no_mangle]
-pub extern "C" fn __xxfunc_main(data_ptr: *const u8, data_size: usize) -> () {
-    let data = unsafe { std::slice::from_raw_parts(data_ptr, data_size) };
-    __xxfunc_inner(data)
+pub extern "C" fn alloc(size: usize) -> *mut u8 {
+    unsafe {
+        GLOBAL_BUFFER.clear();
+        GLOBAL_BUFFER.reserve(size);
+        GLOBAL_BUFFER.as_mut_ptr()
+    }
 }
-#[cfg(not(target_arch = "wasm32"))]
-fn main() {
-    __xxfunc_inner(&[]);
+#[no_mangle]
+pub extern "C" fn process(size: usize) {
+    let data = unsafe { &GLOBAL_BUFFER[..size] };
+    __xxfunc_inner(data);
 }
 fn __xxfunc_inner(data: &[u8]) -> () {
-    let result = {
+    {
         {
-            {
-                ::std::io::_print(
-                    format_args!("Hello, world!, data length: {0}\n", data.len()),
-                );
-            };
-        }
-    };
-    ()
+            ::std::io::_print(
+                format_args!("Hello, world!, data length: {0}\n", data.len()),
+            );
+        };
+    }
 }
 ```
 

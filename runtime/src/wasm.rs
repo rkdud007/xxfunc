@@ -96,7 +96,7 @@ impl Module {
 
     // write the buffer to the memory at the given pointer.
     fn write(&mut self, ptr: usize, buffer: &[u8]) -> Result<()> {
-        self.memory.write(&mut self.store, ptr, &buffer)?;
+        self.memory.write(&mut self.store, ptr, buffer)?;
         Ok(())
     }
 
