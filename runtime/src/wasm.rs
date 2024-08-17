@@ -9,7 +9,7 @@ type NotificationParams = (i64, i64);
 type NotificationReturn = i64;
 
 pub struct ModuleRunner {
-    pub(crate) engine: Engine,
+    engine: Engine,
     linker: Linker<WasiCtx>,
 }
 
@@ -26,6 +26,10 @@ impl ModuleRunner {
         let mut module = Module::new(module, &self.engine, &self.linker)?;
         let _ = module.run(Default::default())?;
         Ok(())
+    }
+
+    pub fn engine(&self) -> &Engine {
+        &self.engine
     }
 }
 

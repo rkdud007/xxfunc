@@ -64,7 +64,7 @@ impl Runtime {
                         let bytes = inner.module_db.get("<ID HERE>").unwrap().unwrap();
 
                         // deserialize module
-                        let engine = &inner.runner.engine;
+                        let engine = inner.runner.engine();
                         let module = unsafe { Module::deserialize(engine, bytes).unwrap() };
 
                         // execute
