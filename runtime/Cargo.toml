@@ -6,8 +6,11 @@ edition.workspace = true
 [dependencies]
 futures = "0.3.30"
 hyper = { version = "1.4.1", features = ["full"] }
-serde_json = "1.0.125"
-tokio = { version = "1.39.2", features = ["full"] }
+serde_json.workspace = true
+tokio.workspace = true
+eyre.workspace = true
+tracing.workspace = true
+clap.workspace = true
 
 # protobuf
 tonic = "0.12.1"
@@ -16,8 +19,7 @@ prost = "0.13.1"
 # wasm
 wasi-common = "22"
 wasmtime = "22"
-eyre = "0.6.12"
-tracing = "0.1.40"
+
 
 [build-dependencies]
 tonic-build = { version = "0.12.1", features = ["prost"] }

@@ -3,6 +3,7 @@ mod proto {
     tonic::include_proto!("execute_service");
 }
 
+use clap::Parser;
 use eyre::Result;
 use proto::execute_server::Execute;
 use proto::execute_server::ExecuteServer;
@@ -35,9 +36,18 @@ impl Execute for ExecuteService {
     }
 }
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Port to listen on. If not specified, a random port will be used.
+    #[arg(short, long, default_value_t = 0)]
+    port: u16,
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    let addr = "[::1]:50051".parse()?;
+    let args = Args::parse();
+    let addr = format!("[::1]:{}", args.port).parse()?;
 
     let service = ExecuteService::new()?;
     Server::builder().add_service(ExecuteServer::new(service)).serve(addr).await?;
