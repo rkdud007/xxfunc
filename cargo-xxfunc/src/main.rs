@@ -1,5 +1,10 @@
 use clap::{Parser, Subcommand};
-use std::{fs, path::Path, process::Command};
+use reqwest::blocking::multipart;
+use std::{
+    fs::{self},
+    path::Path,
+    process::Command,
+};
 use toml::Value;
 
 #[derive(Parser)]
@@ -12,6 +17,7 @@ struct Cli {
 #[derive(Subcommand)]
 enum XxfuncCommand {
     Build(BuildArgs),
+    Deploy(DeployArgs),
 }
 
 #[derive(Parser)]
@@ -21,11 +27,25 @@ struct BuildArgs {
     release: bool,
 }
 
-fn main() {
+#[derive(Parser)]
+#[clap(about = "Deploy the function to the xxfunc service")]
+struct DeployArgs {
+    #[clap(long, help = "URL of the xxfunc service")]
+    url: String,
+
+    #[clap(long, help = "Path to the function's WASM file")]
+    wasm_path: String,
+}
+
+#[tokio::main]
+async fn main() {
     let args = Cli::parse();
 
     match args.command {
         XxfuncCommand::Build(build_args) => build(build_args.release),
+        XxfuncCommand::Deploy(deploy_args) => {
+            deploy(&deploy_args.url, &deploy_args.wasm_path).await.unwrap()
+        }
     }
 }
 
@@ -59,6 +79,27 @@ fn build(release: bool) {
     fs::copy(&wasm_file, dest_dir.join("output.wasm")).expect("Failed to copy WASM file");
 
     println!("Build completed successfully!");
+}
+
+pub async fn deploy(url: &str, wasm_file_path: &str) -> eyre::Result<()> {
+    let form =
+        multipart::Form::new().file("module", wasm_file_path).expect("Failed to create form file");
+
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .post(&format!("{}/deploy", url))
+        .multipart(form)
+        .send()
+        .expect("Failed to send deploy request");
+
+    if response.status().is_success() {
+        println!("Function deployed successfully!");
+        println!("Response: {}", response.text()?);
+        Ok(())
+    } else {
+        println!("Deployment failed with status: {}", response.status());
+        Err(eyre::eyre!("Deployment failed"))
+    }
 }
 
 fn get_project_name() -> Result<String, Box<dyn std::error::Error>> {

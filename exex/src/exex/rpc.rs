@@ -10,8 +10,8 @@ use tokio::sync::{mpsc, oneshot};
 
 #[rpc(server, namespace = "exex")]
 trait ExExRpcExtApi {
-    #[method(name = "install")]
-    async fn install(&self, name: String, wasm_base64: String) -> RpcResult<()>;
+    #[method(name = "deploy")]
+    async fn deploy(&self, name: String, wasm_base64: String) -> RpcResult<()>;
 
     #[method(name = "start")]
     async fn start(&self, name: String) -> RpcResult<()>;
@@ -45,7 +45,7 @@ impl Display for RpcMessage {
 
 #[async_trait]
 impl ExExRpcExtApiServer for ExExRpcExt {
-    async fn install(&self, name: String, wasm_base64: String) -> RpcResult<()> {
+    async fn deploy(&self, name: String, wasm_base64: String) -> RpcResult<()> {
         let (tx, rx) = oneshot::channel();
         let _ = self
             .to_exex

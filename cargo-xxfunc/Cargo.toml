@@ -8,3 +8,7 @@ license.workspace = true
 [dependencies]
 clap = { version = "4.3", features = ["derive"] }
 toml = "0.7"
+reqwest.workspace = true
+eyre.workspace = true
+base64.workspace = true
+tokio.workspace = true

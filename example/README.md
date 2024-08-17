@@ -53,3 +53,9 @@ Then you can build into wasi binary
 ```console
 cargo xxxfunc build
 ```
+
+### deploy
+
+```
+cargo-xxfunc deploy --url http://0.0.0.0:3000 --wasm-path ./wasm_output/output.wasm
+```

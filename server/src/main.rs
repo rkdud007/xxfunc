@@ -51,8 +51,6 @@ async fn start(
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
     info!("Starting module: {}", info.module);
-
-    // Here you would typically retrieve the module from the database and execute it
     match module_db.set_state(&info.module, ModuleState::Started) {
         Ok(()) => Ok(format!("Module '{}' started successfully", info.module)),
         Err(_) => {
