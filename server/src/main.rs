@@ -64,7 +64,7 @@ async fn start(
 async fn main() -> Result<()> {
     // initialize tracing
     tracing_subscriber::fmt::init();
-    let module_db = Arc::new(ModuleDatabase::open("./db")?);
+    let module_db = Arc::new(ModuleDatabase::open("module.db")?);
 
     let app = Router::new()
         .route(
