@@ -29,7 +29,7 @@ impl ModuleRunner {
     }
 }
 
-pub struct Module {
+struct Module {
     memory: Memory,
     instance: Instance,
     store: Store<WasiCtx>,
@@ -50,7 +50,7 @@ impl Module {
         Ok(Self { store, instance, memory })
     }
 
-    pub fn run(&mut self, input: serde_json::Value) -> Result<i64> {
+    fn run(&mut self, input: serde_json::Value) -> Result<i64> {
         let serialized_notification = serde_json::to_vec(&input)?;
 
         // Allocate memory for the notification.

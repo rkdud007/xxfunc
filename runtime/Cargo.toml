@@ -4,6 +4,8 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+xxfunc-db.workspace = true
+
 # protobuf
 tonic = "0.12.1"
 prost = "0.13.1"

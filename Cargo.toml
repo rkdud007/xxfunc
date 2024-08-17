@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["runtime", "cargo-xxfunc", "xxfunc"]
+members = ["runtime", "cargo-xxfunc", "xxfunc", "db"]
 
 [workspace.package]
 version = "0.0.0"
@@ -9,6 +9,8 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
+xxfunc-db = { path = "./db" }
+
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
 	"serde",
 ], rev = "5cd22b50e86a3b09cade509235120a6176de7097" }

@@ -1,0 +1,12 @@
+[package]
+name = "xxfunc-db"
+version.workspace = true
+publish.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+r2d2_sqlite = "0.25.0"
+rusqlite = "0.32.1"
+eyre.workspace = true
+r2d2 = "0.8.10"
