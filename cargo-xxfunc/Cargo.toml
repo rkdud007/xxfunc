@@ -1,9 +1,10 @@
 [package]
-name = "xxfunc"
+name = "cargo-xxfunc"
 version.workspace = true
 publish.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-xxfunc-macro = { path = "macro" }
+clap = { version = "4.3", features = ["derive"] }
+toml = "0.7"

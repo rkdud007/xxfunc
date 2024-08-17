@@ -1537,6 +1537,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cargo-xxfunc"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "toml 0.7.8",
+]
+
+[[package]]
 name = "cargo_metadata"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -10567,11 +10575,7 @@ dependencies = [
 name = "xxfunc"
 version = "0.0.0"
 dependencies = [
- "clap",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
- "toml 0.7.8",
+ "xxfunc-macro",
 ]
 
 [[package]]
@@ -10603,6 +10607,15 @@ dependencies = [
  "tokio",
  "xxfunc-db",
  "xxfunc-runtime",
+]
+
+[[package]]
+name = "xxfunc-macro"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
