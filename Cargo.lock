@@ -10528,6 +10528,7 @@ dependencies = [
  "eyre",
  "futures",
  "hyper",
+ "parking_lot 0.12.3",
  "prost",
  "serde_json",
  "tokio",

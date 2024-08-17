@@ -1,3 +1,4 @@
+mod runtime;
 mod wasm;
 mod proto {
     tonic::include_proto!("execute_service");
@@ -5,20 +6,21 @@ mod proto {
 
 use clap::Parser;
 use eyre::Result;
-use proto::execute_server::Execute;
-use proto::execute_server::ExecuteServer;
-use proto::{ExecuteRequest, ExecuteResponse};
+use proto::{
+    execute_server::{Execute, ExecuteServer},
+    ExecuteRequest, ExecuteResponse,
+};
 use tonic::{transport::Server, Request, Response, Status};
 use tracing::info;
-use wasm::Runtime;
+use wasm::ModuleRunner;
 
 pub struct ExecuteService {
-    runtime: Runtime,
+    runtime: ModuleRunner,
 }
 
 impl ExecuteService {
     pub fn new() -> Result<Self> {
-        let runtime = Runtime::new()?;
+        let runtime = ModuleRunner::new()?;
         Ok(ExecuteService { runtime })
     }
 }
@@ -50,8 +52,6 @@ async fn main() -> Result<()> {
 
     let filter = EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info"));
     let subscriber = fmt().with_env_filter(filter).finish();
-
-    tracing::subscriber::set_global_default(subscriber)?;
 
     let args = Args::parse();
     let addr = format!("[::1]:{}", args.port).parse()?;
