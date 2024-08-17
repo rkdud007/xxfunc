@@ -13,19 +13,27 @@ type NotificationReturn = u64;
 
 pub struct ModuleRunner {
     engine: Engine,
-    linker: Linker<WasiP1Ctx>,
+    // linker: Linker<WasiP1Ctx>,
+    linker: Linker<wasi_common::WasiCtx>,
 }
 
 impl ModuleRunner {
     pub fn new() -> Result<Self> {
-        // enable async support which requires using the WASI preview1 API
-        let mut config = Config::new();
-        config.async_support(true);
+        // // enable async support which requires using the WASI preview1 API
+        // let mut config = Config::new();
+        // config.async_support(true);
 
-        let engine = wasmtime::Engine::new(&config).map_err(|e| eyre!(e))?;
-        let mut linker = Linker::<WasiP1Ctx>::new(&engine);
+        // let engine = wasmtime::Engine::new(&config).map_err(|e| eyre!(e))?;
+        // let mut linker = Linker::<WasiP1Ctx>::new(&engine);
 
-        preview1::add_to_linker_async(&mut linker, |t| t).map_err(|err| eyre!(err))?;
+        // preview1::add_to_linker_async(&mut linker, |t| t).map_err(|err| eyre!(err))?;
+
+        // -- no async support
+
+        let engine = wasmtime::Engine::default();
+        let mut linker = Linker::<wasi_common::WasiCtx>::new(&engine);
+        wasi_common::sync::add_to_linker(&mut linker, |s| s)
+            .map_err(|err| eyre::eyre!("failed to add WASI: {err}"))?;
 
         Ok(Self { engine, linker })
     }
@@ -45,17 +53,19 @@ impl ModuleRunner {
 struct Module {
     memory: Memory,
     instance: Instance,
-    store: Store<WasiP1Ctx>,
+    // store: Store<WasiP1Ctx>,
+    store: Store<wasi_common::WasiCtx>,
 }
 
 impl Module {
     fn new(runner: &ModuleRunner, module: WasmModule) -> Result<Self> {
         // setup the WASI context, with file access to the reth data directory
-        let ctx = WasiCtxBuilder::new()
+        let ctx = wasi_common::sync::WasiCtxBuilder::new()
             .inherit_stdio()
-            .preopened_dir("<PATH TO RETH DATADIR>", "./data-dir", DirPerms::READ, FilePerms::READ)
-            .expect("failed to preopened dir")
-            .build_p1();
+            // .preopened_dir("<PATH TO RETH DATADIR>", "./data-dir", DirPerms::READ, FilePerms::READ)
+            // .expect("failed to preopened dir")
+            // .build_p1();
+            .build();
 
         let mut store = Store::new(&runner.engine, ctx);
 
