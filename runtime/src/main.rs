@@ -46,8 +46,17 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    use tracing_subscriber::{fmt, EnvFilter};
+
+    let filter = EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info"));
+    let subscriber = fmt().with_env_filter(filter).finish();
+
+    tracing::subscriber::set_global_default(subscriber)?;
+
     let args = Args::parse();
     let addr = format!("[::1]:{}", args.port).parse()?;
+
+    info!("Listening on {addr}");
 
     let service = ExecuteService::new()?;
     Server::builder().add_service(ExecuteServer::new(service)).serve(addr).await?;

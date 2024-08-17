@@ -34,7 +34,10 @@ jsonrpsee = { version = "0.23", features = ["server", "macros"] }
 serde_json = "1"
 base64 = "0.22.1"
 reqwest = { version = "0.12.5", features = ["json"] }
+
+# tracing
 tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 # cli
 clap = { version = "4.5.16", features = ["derive"] }
