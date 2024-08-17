@@ -1,9 +1,7 @@
+use eyre::Result;
 use tokio::sync::mpsc;
 
-use super::{
-    rpc::{ExExRpcExt, ExExRpcExtApiServer},
-    wasm::WasmExEx,
-};
+use super::rpc::{ExExRpcExt, ExExRpcExtApiServer};
 
 pub fn init_reth() -> eyre::Result<()> {
     reth::cli::Cli::parse_args().run(|builder, _| async move {
@@ -16,8 +14,8 @@ pub fn init_reth() -> eyre::Result<()> {
                 Ok(())
             })
             .install_exex(
-                "Minimal",
-                |mut ctx| async move { Ok(WasmExEx::new(ctx, rpc_rx)?.start()) },
+                "xx",
+                |mut ctx| async move { Result::Ok(async { Result::Ok(()) }) }, // |mut ctx| async move { Ok(WasmExEx::new(ctx, rpc_rx)?.start()) },
             )
             .launch()
             .await?;
