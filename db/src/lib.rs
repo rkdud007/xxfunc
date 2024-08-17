@@ -3,7 +3,7 @@ use std::path::Path;
 use eyre::Result;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
-use rusqlite::params;
+use rusqlite::{params, OpenFlags};
 
 pub type ModuleId = i64;
 
@@ -23,7 +23,7 @@ pub struct ModuleDatabase {
 
 impl ModuleDatabase {
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let manager = SqliteConnectionManager::file(path);
+        let manager = SqliteConnectionManager::file(path).with_flags(OpenFlags::default());
         let pool = Pool::new(manager)?;
 
         let conn = pool.get()?;

@@ -7,10 +7,10 @@ fn get_test_module(engine: &Engine) -> Module {
     Module::from_binary(engine, bytes).unwrap()
 }
 
-#[test]
-fn run_module() -> Result<()> {
+#[tokio::test]
+async fn run_module() -> Result<()> {
     let runner = ModuleRunner::new()?;
     let module = get_test_module(runner.engine());
-    runner.execute(module, ())?;
+    runner.execute(module, ()).await?;
     Ok(())
 }

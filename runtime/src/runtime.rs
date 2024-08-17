@@ -26,7 +26,7 @@ impl<T> std::future::Future for JoinHandle<T> {
 struct Task {
     module_id: ModuleId,
     exex_notification: Arc<()>,
-    result_sender: oneshot::Sender<()>,
+    result_sender: oneshot::Sender<Result<()>>,
 }
 
 pub struct Runtime {
@@ -42,6 +42,8 @@ struct Inner {
     tasks: Mutex<VecDeque<Task>>,
     /// workers pool
     workers: Mutex<Vec<Thread>>,
+    /// to spawn the module execution on bcs to support async
+    tokio_runtime: tokio::runtime::Runtime,
 }
 
 impl Runtime {
@@ -52,7 +54,9 @@ impl Runtime {
         let runner = ModuleRunner::new()?;
         let tasks = Mutex::new(VecDeque::new());
         let workers = Mutex::new(Vec::with_capacity(num_workers));
-        let inner = Arc::new(Inner { runner, workers, tasks, module_db });
+        let tokio_runtime = tokio::runtime::Builder::new_multi_thread().enable_io().build()?;
+
+        let inner = Arc::new(Inner { runner, workers, tasks, module_db, tokio_runtime });
 
         for _ in 0..num_workers {
             let inner = Arc::clone(&inner);
@@ -67,10 +71,18 @@ impl Runtime {
                         let engine = inner.runner.engine();
                         let module = unsafe { Module::deserialize(engine, bytes).unwrap() };
 
-                        // execute
-                        let _ = inner.runner.execute(module, ()).unwrap();
+                        // execute the module on the tokio runtime because it's async
+                        let func = inner.runner.execute(module, ());
 
-                        task.result_sender.send(()).unwrap();
+                        // let _ = inner.tokio_runtime.spawn(async move {
+                        //     let res = func.await;
+                        //     task.result_sender.send(res);
+                        // });
+
+                        inner.tokio_runtime.block_on(async move {
+                            let res = func.await;
+                            task.result_sender.send(res);
+                        });
                     } else {
                         break;
                     }
@@ -86,11 +98,15 @@ impl Runtime {
         Ok(Self { inner })
     }
 
-    pub async fn spawn(&self, module_id: ModuleId, exex_notification: Arc<()>) -> JoinHandle<()> {
-        let (tx, rx) = oneshot::channel::<()>();
+    pub async fn spawn(
+        &self,
+        module_id: ModuleId,
+        exex_notification: Arc<()>,
+    ) -> JoinHandle<Result<()>> {
+        let (result_sender, rx) = oneshot::channel();
 
         // create task
-        let task = Task { module_id, exex_notification, result_sender: tx };
+        let task = Task { module_id, exex_notification, result_sender };
         self.inner.tasks.lock().push_back(task);
 
         // wake up available worker
