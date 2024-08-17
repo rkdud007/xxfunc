@@ -10,6 +10,10 @@ Builds the function into WACI binary.
 cargo xxfunc build
 ```
 
+```console
+cargo xxfunc build --release
+```
+
 ### deploy
 
 Deploys the function to the xxfunc service.
