@@ -25,3 +25,11 @@ pub fn init_reth() -> eyre::Result<()> {
         handle.wait_for_node_exit().await
     })
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn run_reth() {
+        let _ = super::init_reth();
+    }
+}

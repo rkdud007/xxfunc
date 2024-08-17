@@ -11,20 +11,27 @@ license = "MIT OR Apache-2.0"
 [workspace.dependencies]
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
     "serde",
-], version = "1.0.2" }
-reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
-reth = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
-reth-node-api = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
-reth-tracing = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
-reth-exex-types = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
-reth-execution-types = { git = "https://github.com/paradigmxyz/reth", version = "1.0.2" }
+], rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth-exex-types = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
+reth-execution-types = { git = "https://github.com/paradigmxyz/reth", rev = "5cd22b50e86a3b09cade509235120a6176de7097" }
 
 
-tokio = { version = "1.0", features = ["full"] }
-eyre = "0.6"
-jsonrpsee = { version = "0.23", features = ["server", "macros"] }
+# async
 async-trait = "0.1"
+futures = "0.3"
+tokio = { version = "1.0", features = ["full"] }
+
+# wasm
 wasi-common = "22"
 wasmtime = "22"
+
+# misc
+eyre = "0.6"
+jsonrpsee = { version = "0.23", features = ["server", "macros"] }
 serde_json = "1"
 base64 = "0.22.1"
+reqwest = { version = "0.12.5", features = ["json"] }
