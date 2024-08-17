@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package execute_service;
+
+// Define the Execute service
+service Execute {
+  // The ExecuteRequest method takes a name and bytes as input
+  rpc Execute(ExecuteRequest) returns (ExecuteResponse) {}
+}
+
+// Define the request message
+message ExecuteRequest {
+	// the name of the function
+  string name = 1;
+  // the block id
+  bytes data = 2;
+}
+
+// Define the response message
+message ExecuteResponse {
+  string result = 1;
+}
