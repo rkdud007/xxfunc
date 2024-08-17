@@ -18,5 +18,4 @@ message ExecuteRequest {
 
 // Define the response message
 message ExecuteResponse {
-  string result = 1;
 }

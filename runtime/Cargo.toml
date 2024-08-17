@@ -17,6 +17,7 @@ prost = "0.13.1"
 wasi-common = "22"
 wasmtime = "22"
 eyre = "0.6.12"
+tracing = "0.1.40"
 
 [build-dependencies]
 tonic-build = { version = "0.12.1", features = ["prost"] }

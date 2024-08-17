@@ -10532,6 +10532,7 @@ dependencies = [
  "tokio",
  "tonic",
  "tonic-build",
+ "tracing",
  "wasi-common",
  "wasmtime",
 ]
