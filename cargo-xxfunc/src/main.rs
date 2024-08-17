@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 use reqwest::blocking::multipart;
+use serde_json::json;
 use std::{
     fs::{self},
     path::Path,
@@ -18,6 +19,7 @@ struct Cli {
 enum XxfuncCommand {
     Build(BuildArgs),
     Deploy(DeployArgs),
+    Start(StartArgs),
 }
 
 #[derive(Parser)]
@@ -37,19 +39,26 @@ struct DeployArgs {
     wasm_path: String,
 }
 
-#[tokio::main]
-async fn main() {
+#[derive(Parser)]
+#[clap(about = "Start a module on the xxfunc service")]
+struct StartArgs {
+    #[clap(long, help = "URL of the xxfunc service")]
+    url: String,
+    #[clap(long, help = "Name of the module to start")]
+    module_name: String,
+}
+
+fn main() -> eyre::Result<()> {
     let args = Cli::parse();
 
     match args.command {
         XxfuncCommand::Build(build_args) => build(build_args.release),
-        XxfuncCommand::Deploy(deploy_args) => {
-            deploy(&deploy_args.url, &deploy_args.wasm_path).await.unwrap()
-        }
+        XxfuncCommand::Deploy(deploy_args) => deploy(&deploy_args.url, &deploy_args.wasm_path),
+        XxfuncCommand::Start(start_args) => start(&start_args.url, &start_args.module_name),
     }
 }
 
-fn build(release: bool) {
+fn build(release: bool) -> eyre::Result<()> {
     println!("Building with cargo wasi...");
 
     let mut args = vec!["wasi", "build"];
@@ -79,9 +88,10 @@ fn build(release: bool) {
     fs::copy(&wasm_file, dest_dir.join("output.wasm")).expect("Failed to copy WASM file");
 
     println!("Build completed successfully!");
+    Ok(())
 }
 
-pub async fn deploy(url: &str, wasm_file_path: &str) -> eyre::Result<()> {
+pub fn deploy(url: &str, wasm_file_path: &str) -> eyre::Result<()> {
     let form =
         multipart::Form::new().file("module", wasm_file_path).expect("Failed to create form file");
 
@@ -99,6 +109,26 @@ pub async fn deploy(url: &str, wasm_file_path: &str) -> eyre::Result<()> {
     } else {
         println!("Deployment failed with status: {}", response.status());
         Err(eyre::eyre!("Deployment failed"))
+    }
+}
+
+fn start(url: &str, module_name: &str) -> eyre::Result<()> {
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .post(&format!("{}/start", url))
+        .json(&json!({
+            "module": module_name
+        }))
+        .send()
+        .expect("Failed to send deploy request");
+
+    if response.status().is_success() {
+        println!("Function started successfully!");
+        println!("Response: {}", response.text()?);
+        Ok(())
+    } else {
+        println!("Start failed with status: {}", response.status());
+        Err(eyre::eyre!("Start failed"))
     }
 }
 

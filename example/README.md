@@ -1,4 +1,6 @@
-# example of `#[xxfunc::main]` macro
+# example
+
+## `#[xxfunc::main]` macro
 
 user code should be in `src/main.rs`
 
@@ -48,7 +50,7 @@ fn __xxfunc_inner(data: &[u8]) -> () {
 }
 ```
 
-Then you can build into wasi binary
+## build
 
 ```console
 cargo xxxfunc build
@@ -58,4 +60,10 @@ cargo xxxfunc build
 
 ```
 cargo-xxfunc deploy --url http://0.0.0.0:3000 --wasm-path ./wasm_output/output.wasm
+```
+
+### start
+
+```
+cargo-xxfunc start --url http://0.0.0.0:3000 --module-name wasm-exex
 ```

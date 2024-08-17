@@ -19,7 +19,7 @@ cargo xxfunc build --release
 Deploys the function to the xxfunc service.
 
 ```console
-cargo xxfunc deploy ---url <url>
+cargo xxfunc deploy ---url <server-url> --wasm-path <wasm-file-path>
 ```
 
 It will return the function signature.
@@ -29,5 +29,5 @@ It will return the function signature.
 Starts the function to be triggered by exex event.
 
 ```console
-cargo xxfunc start ---url <url> --function <function-signature>
+cargo xxfunc start ---url <server-url> --module-name <module-name>
 ```
