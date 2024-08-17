@@ -10,3 +10,5 @@ wrap_comments = true
 format_code_in_doc_comments = true
 doc_comment_code_block_width = 100
 format_macro_matchers = true
+
+use_try_shorthand = true
