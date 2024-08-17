@@ -9,23 +9,23 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 /// Latest allocation made by the `alloc` function.
 /// Used to check that the call to `process` is preceded by a call to `alloc`.
 // TODO(alexey): we're single-threaded, use something easeir.
-static LATEST_ALLOCATION: Mutex<Option<(i64, i64)>> = Mutex::new(None);
+static LATEST_ALLOCATION: Mutex<Option<(u64, u64)>> = Mutex::new(None);
 
 #[no_mangle]
-pub extern "C" fn alloc(data_size: i64) -> i64 {
+pub extern "C" fn alloc(data_size: u64) -> u64 {
     let mut buf = Vec::with_capacity(data_size as usize);
     let ptr = buf.as_mut_ptr();
     // Prevent the buffer from being dropped.
     std::mem::forget(buf);
-    let data_ptr = ptr as *const u8 as i64;
+    let data_ptr = ptr as *const u8 as u64;
 
-    *LATEST_ALLOCATION.lock().expect("failed to acquire mutex") = Some((ptr as i64, data_size));
+    *LATEST_ALLOCATION.lock().expect("failed to acquire mutex") = Some((ptr as u64, data_size));
 
     data_ptr
 }
 
 #[no_mangle]
-pub extern "C" fn process(data_ptr: i64, data_size: i64) -> i64 {
+pub extern "C" fn process(data_ptr: u64, data_size: u64) -> u64 {
     // Check that the last allocation matches the passed arguments.
     assert_eq!(
         (data_ptr, data_size),
@@ -39,5 +39,5 @@ pub extern "C" fn process(data_ptr: i64, data_size: i64) -> i64 {
     let notification = String::from_utf8_lossy(data);
     println!("ohayo");
 
-    notification.len() as i64
+    notification.len() as u64
 }

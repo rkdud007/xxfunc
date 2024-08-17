@@ -7,8 +7,9 @@ edition.workspace = true
 xxfunc-db.workspace = true
 
 # wasm
-wasi-common = "22"
-wasmtime = "22"
+wasi-common = "23.0.2"
+wasmtime-wasi = "23.0.2"
+wasmtime = { version = "23.0.2", features = ["async"] }
 
 futures = "0.3.30"
 hyper = { version = "1.4.1", features = ["full"] }
