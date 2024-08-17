@@ -15,7 +15,7 @@ cargo xxfunc build
 Deploys the function to the xxfunc service.
 
 ```console
-cargo xxfunc deploy ---url <url> --function-path <function-path>
+cargo xxfunc deploy ---url <url>
 ```
 
 It will return the function signature.
