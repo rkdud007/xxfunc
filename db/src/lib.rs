@@ -10,7 +10,6 @@ pub type ModuleId = i64;
 // Enum to represent module states
 #[derive(Debug, Clone, Copy)]
 pub enum ModuleState {
-    NotStarted,
     Started,
     Stopped,
 }
@@ -58,7 +57,7 @@ impl ModuleDatabase {
         let module_id = conn.last_insert_rowid();
         conn.execute(
             "INSERT INTO module_states (module_id, state) VALUES (?1, ?2)",
-            params![module_id, ModuleState::NotStarted.to_string()],
+            params![module_id, ModuleState::Stopped.to_string()],
         )?;
         Ok(())
     }
@@ -135,7 +134,6 @@ impl ModuleDatabase {
 impl std::fmt::Display for ModuleState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ModuleState::NotStarted => write!(f, "NotStarted"),
             ModuleState::Started => write!(f, "Started"),
             ModuleState::Stopped => write!(f, "Stopped"),
         }
@@ -147,7 +145,6 @@ impl std::str::FromStr for ModuleState {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "NotStarted" => Ok(ModuleState::NotStarted),
             "Started" => Ok(ModuleState::Started),
             "Stopped" => Ok(ModuleState::Stopped),
             _ => Err(eyre::eyre!("Invalid module state")),
