@@ -92,16 +92,12 @@ impl Runtime {
         Ok(Self { inner })
     }
 
-    pub async fn spawn(
-        &self,
-        module_id: ModuleId,
-        exex_notification: Arc<()>,
-    ) -> JoinHandle<Result<()>> {
+    pub fn spawn(&self, module_id: ModuleId, exex_notification: Arc<()>) -> JoinHandle<Result<()>> {
+        println!("ohayoe");
         let (result_sender, rx) = oneshot::channel();
 
         // create task
         let task = Task { module_id, exex_notification, result_sender };
-        info!("⚡️ task spawned id: {:?}", module_id);
         self.inner.tasks.lock().push_back(task);
 
         // wake up available worker
@@ -141,7 +137,7 @@ mod tests {
         let exex_notification = Arc::new(());
 
         // Spawn a task on the runtime
-        let handle = runtime.spawn(module_id, exex_notification).await;
+        let handle = runtime.spawn(module_id, exex_notification);
 
         // Wait for the task to complete
         let result = handle.await?;
