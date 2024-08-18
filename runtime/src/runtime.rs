@@ -93,7 +93,6 @@ impl Runtime {
     }
 
     pub fn spawn(&self, module_id: ModuleId, exex_notification: Arc<()>) -> JoinHandle<Result<()>> {
-        println!("ohayoe");
         let (result_sender, rx) = oneshot::channel();
 
         // create task

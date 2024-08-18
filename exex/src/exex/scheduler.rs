@@ -47,9 +47,8 @@ impl<N: FullNodeComponents> Scheduler<N> {
 
         let mut count = 0;
         for id in modules {
-            println!("spawnign");
             let _ = self.runtime.spawn(id.clone(), exex_notification.clone());
-            println!("spawned");
+
             count += 1;
         }
 
