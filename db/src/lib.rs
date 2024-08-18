@@ -1,5 +1,6 @@
 use std::{
     fs::{File, OpenOptions},
+    io::Read,
     path::Path,
 };
 
@@ -26,7 +27,6 @@ pub struct ModuleDatabase {
 
 impl ModuleDatabase {
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        // File::create(&path).expect("Failed to create database file");
         let _ = OpenOptions::new().read(true).write(true).create(true).open(&path)?;
 
         let manager =
@@ -107,7 +107,6 @@ impl ModuleDatabase {
         Ok(())
     }
 
-    // return a list of modules with the specified state
     pub fn get_modules_by_state(&self, state: ModuleState) -> Result<Vec<ModuleId>> {
         let conn = self.pool.get()?;
         let mut stmt = conn.prepare(
@@ -124,6 +123,15 @@ impl ModuleDatabase {
         }
 
         Ok(modules)
+    }
+
+    // Function to create a test database and insert a WASM binary file
+    pub fn create_test_db() -> Result<Self> {
+        let temp_file = tempfile::NamedTempFile::new()?.into_temp_path().with_extension("db");
+        let db = ModuleDatabase::open(&temp_file)?;
+        let bytes = include_bytes!("../../example/wasm_output/output.wasm");
+        db.insert("test_module", bytes)?;
+        Ok(db)
     }
 }
 

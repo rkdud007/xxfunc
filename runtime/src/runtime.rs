@@ -62,7 +62,7 @@ impl Runtime {
 
             thread::spawn(move || {
                 loop {
-                    if let Some(task) = inner.tasks.lock().pop_front() {
+                    while let Some(task) = inner.tasks.lock().pop_front() {
                         // get module from db
                         let bytes = inner.module_db.get(task.module_id).unwrap().unwrap();
 
@@ -73,26 +73,19 @@ impl Runtime {
                         // execute the module on the tokio runtime because it's async
                         let func = inner.runner.execute(module, ());
 
-                        // let _ = inner.tokio_runtime.spawn(async move {
-                        //     let res = func.await;
-                        //     task.result_sender.send(res);
-                        // });
-
                         let module_id = task.module_id;
                         inner.tokio_runtime.block_on(async move {
                             info!(%module_id, "Executing module.");
                             let res = func.await;
                             let _ = task.result_sender.send(res);
                         });
-                    } else {
-                        break;
                     }
-                }
 
-                // park thread if no tasks
-                let handle = thread::current();
-                inner.workers.lock().push(handle);
-                thread::park();
+                    // park thread if no tasks
+                    let handle = thread::current();
+                    inner.workers.lock().push(handle);
+                    thread::park();
+                }
             });
         }
 
@@ -120,5 +113,41 @@ impl Runtime {
         if let Some(worker) = self.inner.workers.lock().pop() {
             worker.unpark();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use xxfunc_db::ModuleState;
+
+    use super::*;
+    use std::sync::Arc;
+
+    #[tokio::test]
+    async fn test_runtime() -> Result<()> {
+        // Create a test database and insert a test module
+        let db = ModuleDatabase::create_test_db()?;
+
+        db.set_state("test_module", ModuleState::Started)?;
+
+        // Create a new runtime
+        let runtime = Runtime::new(db.clone())?;
+
+        // Get the test module ID
+        let module_id = db.get_modules_by_state(ModuleState::Started)?[0];
+
+        // Create a mock ExEx notification
+        let exex_notification = Arc::new(());
+
+        // Spawn a task on the runtime
+        let handle = runtime.spawn(module_id, exex_notification).await;
+
+        // Wait for the task to complete
+        let result = handle.await?;
+
+        // Assert that the task completed successfully
+        assert!(result.is_ok());
+
+        Ok(())
     }
 }
