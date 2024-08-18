@@ -10,6 +10,20 @@
 
 ![](.github/arch.png)
 
+## Define serverless function
+
+check out [example](./example/)
+
+```
+#![no_main]
+
+#[xxfunc::main]
+fn main() {
+    println!("🦀 Hello, world from wasi!, exex notification data length: {}", data.len());
+}
+
+```
+
 ## Demo
 
 terminal 1 (server)
