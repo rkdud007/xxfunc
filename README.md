@@ -1,11 +1,11 @@
 # xxfunc
 
+`xxfunc` is serverless function support on reth using exex (execution hook).
+We compile arbitrary code to `WASI` module and when exex hook is triggered, it will spawn a new wasm runtime and execute the code.
+
 ## Motivation
 
 Not many people able to run/manage their own node. But yes many people want to run logic on top. That was motivation of `serverless function` invention. We wanted to give same ability for Ethereum full node.
-
-`xxfunc` is serverless function support on reth using exex (execution hook).
-We compile arbitrary code to `WASI` module and when exex hook is triggered, it will spawn a new wasm runtime and execute the code.
 
 ## Architecture
 
