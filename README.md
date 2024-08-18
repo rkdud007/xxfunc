@@ -1,5 +1,15 @@
 # xxfunc
 
+`xxfunc` is serverless function support on reth using exex (execution hook).
+
+## Architecture
+
+- [`cargo-xxfunc`](./cargo-xxfunc/): cli tool to build, deploy, start serverless function.
+- [`exex`](./exex/): reth + scheduler binary. Use execution hook to listen event and scheduler scraps all active tasks and spawn runtimes
+- [`server`](./server/): public endpoint to submit function. interact with db.
+
+![](.github/arch.png)
+
 ## Demo
 
 terminal 1 (server)
