@@ -101,6 +101,7 @@ impl Runtime {
 
         // create task
         let task = Task { module_id, exex_notification, result_sender };
+        info!("⚡️ task spawned id: {:?}", module_id);
         self.inner.tasks.lock().push_back(task);
 
         // wake up available worker
