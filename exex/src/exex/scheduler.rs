@@ -43,8 +43,6 @@ impl<N: FullNodeComponents> Scheduler<N> {
         let exex_notification = Arc::new(());
         let modules = self.get_active_modules()?;
 
-        dbg!(modules.len());
-
         let mut count = 0;
         for id in modules {
             let _ = self.runtime.spawn(id.clone(), exex_notification.clone());
