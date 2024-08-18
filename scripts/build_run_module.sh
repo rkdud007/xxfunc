@@ -7,4 +7,4 @@
 (cd example && cargo-xxfunc build --release) || { echo "Failed to build example project"; exit 1; }
 
 # Change to runtime directory, run tests, and return to the original directory
-(cd runtime && cargo test) || { echo "Tests failed in runtime directory"; exit 1; }
+(cd runtime && cargo test --test module) || { echo "Tests failed in runtime directory"; exit 1; }
