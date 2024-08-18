@@ -1,5 +1,7 @@
 # xxfunc
 
+> **Warning:** This codebase is experimental and not production ready 🚧
+
 `xxfunc` is serverless function support on reth using exex (execution hook).
 We compile arbitrary code to `WASI` module and when exex hook is triggered, it will spawn a new wasm runtime and execute the code.
 
