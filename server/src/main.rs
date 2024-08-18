@@ -7,7 +7,7 @@ use axum::{
 use eyre::Result;
 use serde::Deserialize;
 use std::sync::Arc;
-use tracing::{error, info};
+use tracing::info;
 use uuid::Uuid;
 use xxfunc_db::{ModuleDatabase, ModuleState};
 

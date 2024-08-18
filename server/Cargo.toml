@@ -1,15 +1,15 @@
 [package]
-name = "server"
+name = "xxfunc-server"
 version.workspace = true
 publish.workspace = true
 edition.workspace = true
 license.workspace = true
 
 [dependencies]
-axum = { version = "0.7.5", features = ["multipart"] }
-tokio = { version = "1", features = ["full"] }
-uuid = { version = "1", features = ["v4"] }
-serde = { version = "1", features = ["derive"] }
+axum.workspace = true
+tokio.workspace = true
+uuid.workspace = true
+serde.workspace = true
 xxfunc-db.workspace = true
 eyre.workspace = true
 tracing-subscriber.workspace = true

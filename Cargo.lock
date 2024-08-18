@@ -8666,20 +8666,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "server"
-version = "0.0.0"
-dependencies = [
- "axum",
- "eyre",
- "serde",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
- "xxfunc-db",
-]
-
-[[package]]
 name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11028,6 +11014,20 @@ dependencies = [
  "wasmtime",
  "wasmtime-wasi",
  "wasmtime-wasi-http",
+ "xxfunc-db",
+]
+
+[[package]]
+name = "xxfunc-server"
+version = "0.0.0"
+dependencies = [
+ "axum",
+ "eyre",
+ "serde",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
  "xxfunc-db",
 ]
 
