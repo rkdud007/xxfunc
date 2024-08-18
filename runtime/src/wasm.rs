@@ -56,7 +56,7 @@ impl Module {
 
         // setup the WASI context, with file access to the reth data directory
         let ctx = wasmtime_wasi::WasiCtxBuilder::new()
-            .inherit_stdout()
+            .inherit_stdio()
             .preopened_dir("../random-dir", "./reth", DirPerms::READ, FilePerms::READ)
             .expect("failed to preopened dir")
             .build_p1();
