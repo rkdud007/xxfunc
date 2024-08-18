@@ -32,6 +32,16 @@ pub struct StartArgs {
     pub module_name: String,
 }
 
+#[derive(Parser)]
+#[clap(about = "Stop a module on the xxfunc service")]
+pub struct StopArgs {
+    #[clap(long, help = "URL of the xxfunc service")]
+    pub url: String,
+
+    #[clap(long, help = "Name of the module to stop")]
+    pub module_name: String,
+}
+
 pub fn build(release: bool) -> eyre::Result<()> {
     let mut args = vec!["wasi", "build"];
     if release {
@@ -90,7 +100,7 @@ pub fn start(url: &str, module_name: &str) -> eyre::Result<()> {
             "module": module_name
         }))
         .send()
-        .expect("Failed to send deploy request");
+        .expect("Failed to send start request");
 
     if response.status().is_success() {
         println!("xxfunc start completed successfully");
@@ -98,6 +108,25 @@ pub fn start(url: &str, module_name: &str) -> eyre::Result<()> {
     } else {
         println!("Failed with status: {}", response.status());
         Err(eyre::eyre!("xxfunc start failed"))
+    }
+}
+
+pub fn stop(url: &str, module_name: &str) -> eyre::Result<()> {
+    let client = reqwest::blocking::Client::new();
+    let response = client
+        .post(&format!("{}/stop", url))
+        .json(&json!({
+            "module": module_name
+        }))
+        .send()
+        .expect("Failed to send stop request");
+
+    if response.status().is_success() {
+        println!("xxfunc stop completed successfully");
+        Ok(())
+    } else {
+        println!("Failed with status: {}", response.status());
+        Err(eyre::eyre!("xxfunc stop failed"))
     }
 }
 
