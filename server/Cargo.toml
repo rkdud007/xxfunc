@@ -8,7 +8,6 @@ license.workspace = true
 [dependencies]
 axum.workspace = true
 tokio.workspace = true
-uuid.workspace = true
 serde.workspace = true
 xxfunc-db.workspace = true
 eyre.workspace = true

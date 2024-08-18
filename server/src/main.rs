@@ -8,7 +8,6 @@ use eyre::Result;
 use serde::Deserialize;
 use std::sync::Arc;
 use tracing::info;
-use uuid::Uuid;
 use xxfunc_db::{ModuleDatabase, ModuleState};
 
 async fn deploy(
@@ -20,13 +19,9 @@ async fn deploy(
     while let Some(field) = multipart.next_field().await.map_err(|_| StatusCode::BAD_REQUEST)? {
         let name = field.name().unwrap_or_default().to_string();
         if name == "module" {
-            file_name = field
-                .file_name()
-                .map(|f| f.to_string())
-                .unwrap_or_else(|| format!("{}.wasm", Uuid::new_v4()));
+            file_name = field.file_name().map(|f| f.to_string()).unwrap_or_default();
             info!("Received file: {}", file_name);
             let raw_data = field.bytes().await.map_err(|_| StatusCode::BAD_REQUEST)?;
-
             module_db
                 .insert(&file_name, &raw_data)
                 .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -42,12 +37,12 @@ async fn deploy(
 }
 
 #[derive(Deserialize)]
-struct StartInfo {
+struct ModuleInfo {
     module: String,
 }
 
 async fn start(
-    Json(info): Json<StartInfo>,
+    Json(info): Json<ModuleInfo>,
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
     info!("Starting module: {}", info.module);
@@ -58,12 +53,24 @@ async fn start(
     Ok(info.module)
 }
 
+async fn stop(
+    Json(info): Json<ModuleInfo>,
+    module_db: Arc<ModuleDatabase>,
+) -> Result<String, StatusCode> {
+    info!("Stopping module: {}", info.module);
+    module_db
+        .set_state(&info.module, ModuleState::Stopped)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    info!("Module '{}' stopped successfully", info.module);
+    Ok(info.module)
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // initialize tracing
     tracing_subscriber::fmt::init();
     let module_db = Arc::new(ModuleDatabase::open("module.db")?);
-    info!("Module database initialized");
+    info!("Module database initialized at module.db");
 
     let app = Router::new()
         .route(
@@ -78,6 +85,13 @@ async fn main() -> Result<()> {
             post({
                 let module_db = Arc::clone(&module_db);
                 move |info| start(info, module_db)
+            }),
+        )
+        .route(
+            "/stop",
+            post({
+                let module_db = Arc::clone(&module_db);
+                move |info| stop(info, module_db)
             }),
         )
         .layer(DefaultBodyLimit::disable());

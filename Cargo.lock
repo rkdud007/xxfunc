@@ -11027,7 +11027,6 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
- "uuid",
  "xxfunc-db",
 ]
 
