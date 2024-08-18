@@ -68,7 +68,7 @@ impl Runtime {
 
                         // deserialize module
                         let engine = inner.runner.engine();
-                        let module = unsafe { Module::deserialize(engine, bytes).unwrap() };
+                        let module = Module::from_binary(engine, &bytes).unwrap();
 
                         // execute the module on the tokio runtime because it's async
                         let func = inner.runner.execute(module, ());
@@ -122,7 +122,7 @@ mod tests {
     use xxfunc_db::ModuleState;
 
     use super::*;
-    use std::sync::Arc;
+    use std::{sync::Arc, time::Duration};
 
     #[tokio::test]
     async fn test_runtime() -> Result<()> {
