@@ -3,6 +3,7 @@ use std::{collections::VecDeque, sync::Arc, thread::Thread};
 use eyre::Result;
 use futures::channel::oneshot;
 use parking_lot::Mutex;
+use reth_exex_types::ExExNotification;
 use std::thread;
 use tracing::info;
 use wasmtime::Module;
@@ -26,7 +27,7 @@ impl<T> std::future::Future for JoinHandle<T> {
 
 struct Task {
     module_id: ModuleId,
-    exex_notification: Arc<()>,
+    exex_notification: Arc<ExExNotification>,
     result_sender: oneshot::Sender<Result<()>>,
 }
 
@@ -69,9 +70,12 @@ impl Runtime {
                         // deserialize module
                         let engine = inner.runner.engine();
                         let module = Module::from_binary(engine, &bytes).unwrap();
+                        let serialized_notification =
+                        // Can't even do JSON encode of a full struct smh, "key must be a string"
+                        serde_json::to_vec(&task.exex_notification.committed_chain().map(|chain| chain.tip().header.clone())).unwrap();
 
                         // execute the module on the tokio runtime because it's async
-                        let func = inner.runner.execute(module, ());
+                        let func = inner.runner.execute(module, serialized_notification);
 
                         let module_id = task.module_id;
                         inner.tokio_runtime.block_on(async move {
@@ -92,7 +96,11 @@ impl Runtime {
         Ok(Self { inner })
     }
 
-    pub fn spawn(&self, module_id: ModuleId, exex_notification: Arc<()>) -> JoinHandle<Result<()>> {
+    pub fn spawn(
+        &self,
+        module_id: ModuleId,
+        exex_notification: Arc<ExExNotification>,
+    ) -> JoinHandle<Result<()>> {
         let (result_sender, rx) = oneshot::channel();
 
         // create task
@@ -114,10 +122,11 @@ impl Runtime {
 
 #[cfg(test)]
 mod tests {
+    use reth_execution_types::Chain;
     use xxfunc_db::ModuleState;
 
     use super::*;
-    use std::{sync::Arc, time::Duration};
+    use std::sync::Arc;
 
     #[tokio::test]
     async fn test_runtime() -> Result<()> {
@@ -132,8 +141,16 @@ mod tests {
         // Get the test module ID
         let module_id = db.get_modules_by_state(ModuleState::Started)?[0];
 
+        let notification = ExExNotification::ChainCommitted {
+            new: Arc::new(Chain::from_block(
+                Default::default(),
+                Default::default(),
+                Default::default(),
+            )),
+        };
+
         // Create a mock ExEx notification
-        let exex_notification = Arc::new(());
+        let exex_notification = Arc::new(notification);
 
         // Spawn a task on the runtime
         let handle = runtime.spawn(module_id, exex_notification);

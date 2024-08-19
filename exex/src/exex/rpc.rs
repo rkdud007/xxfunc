@@ -74,10 +74,10 @@ fn rpc_internal_error() -> ErrorObjectOwned {
     ErrorObject::owned(INTERNAL_ERROR_CODE, "internal error", Some(""))
 }
 
-macro_rules! rpc_internal_error_format {
-    ($($arg:tt)*) => {
-        jsonrpsee::types::error::ErrorObject::owned(jsonrpsee::types::error::INTERNAL_ERROR_CODE, format!($($arg)*), Some(""))
-    };
-}
+// macro_rules! rpc_internal_error_format {
+//     ($($arg:tt)*) => {
+//         jsonrpsee::types::error::ErrorObject::owned(jsonrpsee::types::error::INTERNAL_ERROR_CODE, format!($($arg)*), Some(""))
+//     };
+// }
 
-pub(crate) use rpc_internal_error_format;
+// pub(crate) use rpc_internal_error_format;

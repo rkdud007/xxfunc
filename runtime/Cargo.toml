@@ -22,5 +22,9 @@ tracing-subscriber.workspace = true
 parking_lot = "0.12.3"
 wasmtime-wasi-http = "23.0.2"
 
+# reth
+reth-exex-types.workspace = true
+reth-execution-types.workspace = true
+
 [build-dependencies]
 tonic-build = { version = "0.12.1", features = ["prost"] }

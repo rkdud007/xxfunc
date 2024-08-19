@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use eyre::Result;
 use jsonrpsee::tracing::info;
-use reth_exex::ExExContext;
+use reth_exex::{ExExContext, ExExNotification};
 use reth_node_api::FullNodeComponents;
 use xxfunc_db::{ModuleDatabase, ModuleId, ModuleState};
 use xxfunc_runtime::runtime::Runtime;
@@ -25,27 +25,27 @@ impl<N: FullNodeComponents> Scheduler<N> {
     pub async fn start(mut self) -> Result<()> {
         loop {
             tokio::select! {
-                Some(_) = self.exex_ctx.notifications.recv() => {
-                    self.handle_notification().await?;
+                Some(notification) = self.exex_ctx.notifications.recv() => {
+                    self.handle_notification(notification).await?;
                 }
             }
         }
     }
 
-    async fn handle_notification(&self) -> Result<()> {
-        let count = self.spawn_tasks().await?;
+    async fn handle_notification(&self, notification: ExExNotification) -> Result<()> {
+        let count = self.spawn_tasks(notification).await?;
         info!(%count, "Scheduled tasks.");
         Ok(())
     }
 
     // spawn tasks on the runtime and return the number of tasks spawned
-    async fn spawn_tasks(&self) -> Result<usize> {
-        let exex_notification = Arc::new(());
+    async fn spawn_tasks(&self, notification: ExExNotification) -> Result<usize> {
+        let exex_notification = Arc::new(notification);
         let modules = self.get_active_modules()?;
 
         let mut count = 0;
         for id in modules {
-            let _ = self.runtime.spawn(id.clone(), exex_notification.clone());
+            let result = self.runtime.spawn(id, Arc::clone(&exex_notification));
 
             count += 1;
         }

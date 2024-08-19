@@ -32,9 +32,9 @@ impl ModuleRunner {
     }
 
     // TODO: make input the exex notification
-    pub async fn execute(&self, module: WasmModule, input: ()) -> Result<()> {
+    pub async fn execute(&self, module: WasmModule, input: Vec<u8>) -> Result<()> {
         let mut module = Module::new(self, module).await?;
-        let _ = module.run(Default::default()).await?;
+        let _ = module.run(input).await?;
         Ok(())
     }
 
@@ -74,15 +74,13 @@ impl Module {
         Ok(Self { store, instance, memory })
     }
 
-    async fn run(&mut self, input: serde_json::Value) -> Result<()> {
-        let serialized_notification = serde_json::to_vec(&input)?;
-
+    async fn run(&mut self, input: Vec<u8>) -> Result<()> {
         // Allocate memory for the notification.
-        let data_size = serialized_notification.len() as u64;
+        let data_size = input.len() as u64;
         let ptr = self.alloc(data_size).await?;
 
         // Write the notification to the allocated memory.
-        self.write(ptr as usize, &serialized_notification)?;
+        self.write(ptr as usize, &input)?;
 
         // Call the notification function that will read the allocated memory.
         let _ = self.process(ptr, data_size).await?;

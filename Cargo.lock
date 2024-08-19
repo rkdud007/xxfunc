@@ -11005,6 +11005,8 @@ dependencies = [
  "futures",
  "hyper 1.4.1",
  "parking_lot 0.12.3",
+ "reth-execution-types",
+ "reth-exex-types",
  "serde_json",
  "tokio",
  "tonic-build",
