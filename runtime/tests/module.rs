@@ -11,6 +11,6 @@ fn get_test_module(engine: &Engine) -> Module {
 async fn run_module() -> Result<()> {
     let runner = ModuleRunner::new()?;
     let module = get_test_module(runner.engine());
-    runner.execute(module, ()).await?;
+    runner.execute(module, Vec::new()).await?;
     Ok(())
 }
