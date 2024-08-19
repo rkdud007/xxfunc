@@ -22,6 +22,7 @@ xxfunc-db = { path = "db" }
 xxfunc-runtime = { path = "runtime" }
 xxfunc = { path = "xxfunc" }
 xxfunc-exex = { path = "exex" }
+xxfunc-server = { path = "server" }
 
 reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
 	"serde",
@@ -48,6 +49,8 @@ jsonrpsee = { version = "0.23", features = ["server", "macros"] }
 serde_json = "1"
 base64 = "0.22.1"
 reqwest = { version = "0.11", features = ["blocking", "multipart", "json"] }
+toml = "0.7"
+serde = { version = "1", features = ["derive"] }
 
 # tracing
 tracing = "0.1.40"
@@ -55,3 +58,12 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 # cli
 clap = { version = "4.5.16", features = ["derive"] }
+
+# server
+axum = { version = "0.7.5", features = ["multipart"] }
+
+# db
+r2d2 = "0.8.10"
+tempfile = "3.12.0"
+r2d2_sqlite = "0.25.0"
+rusqlite = "0.32.1"

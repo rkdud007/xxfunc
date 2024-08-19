@@ -1,20 +1,14 @@
-use std::{
-    fs::{File, OpenOptions},
-    io::Read,
-    path::Path,
-};
-
 use eyre::Result;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use rusqlite::{params, OpenFlags};
+use std::{fs::OpenOptions, path::Path};
 
 pub type ModuleId = i64;
 
 // Enum to represent module states
 #[derive(Debug, Clone, Copy)]
 pub enum ModuleState {
-    NotStarted,
     Started,
     Stopped,
 }
@@ -27,7 +21,8 @@ pub struct ModuleDatabase {
 
 impl ModuleDatabase {
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let _ = OpenOptions::new().read(true).write(true).create(true).open(&path)?;
+        let _ =
+            OpenOptions::new().read(true).write(true).create(true).truncate(true).open(&path)?;
 
         let manager =
             SqliteConnectionManager::file(path).with_flags(OpenFlags::SQLITE_OPEN_READ_WRITE);
@@ -61,7 +56,7 @@ impl ModuleDatabase {
         let module_id = conn.last_insert_rowid();
         conn.execute(
             "INSERT INTO module_states (module_id, state) VALUES (?1, ?2)",
-            params![module_id, ModuleState::NotStarted.to_string()],
+            params![module_id, ModuleState::Stopped.to_string()],
         )?;
         Ok(())
     }
@@ -98,12 +93,15 @@ impl ModuleDatabase {
 
     pub fn set_state(&self, name: &str, state: ModuleState) -> Result<()> {
         let conn = self.pool.get().unwrap();
-        conn.execute(
+        let rows_affected = conn.execute(
             "UPDATE module_states
              SET state = ?1
              WHERE module_id = (SELECT id FROM modules WHERE name = ?2)",
             params![state.to_string(), name],
         )?;
+        if rows_affected == 0 {
+            return Err(eyre::eyre!("Module not found"));
+        }
         Ok(())
     }
 
@@ -138,7 +136,6 @@ impl ModuleDatabase {
 impl std::fmt::Display for ModuleState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ModuleState::NotStarted => write!(f, "NotStarted"),
             ModuleState::Started => write!(f, "Started"),
             ModuleState::Stopped => write!(f, "Stopped"),
         }
@@ -150,7 +147,6 @@ impl std::str::FromStr for ModuleState {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "NotStarted" => Ok(ModuleState::NotStarted),
             "Started" => Ok(ModuleState::Started),
             "Stopped" => Ok(ModuleState::Stopped),
             _ => Err(eyre::eyre!("Invalid module state")),

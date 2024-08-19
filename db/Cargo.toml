@@ -6,8 +6,8 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-r2d2_sqlite = "0.25.0"
-rusqlite = "0.32.1"
+r2d2_sqlite.workspace = true
+rusqlite.workspace = true
 eyre.workspace = true
-r2d2 = "0.8.10"
-tempfile = "3.12.0"
+r2d2.workspace = true
+tempfile.workspace = true
