@@ -61,3 +61,9 @@ clap = { version = "4.5.16", features = ["derive"] }
 
 # server
 axum = { version = "0.7.5", features = ["multipart"] }
+
+# db
+r2d2 = "0.8.10"
+tempfile = "3.12.0"
+r2d2_sqlite = "0.25.0"
+rusqlite = "0.32.1"

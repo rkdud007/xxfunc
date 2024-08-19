@@ -1,9 +1,8 @@
-use std::{fs::OpenOptions, path::Path};
-
 use eyre::Result;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use rusqlite::{params, OpenFlags};
+use std::{fs::OpenOptions, path::Path};
 
 pub type ModuleId = i64;
 
@@ -94,12 +93,15 @@ impl ModuleDatabase {
 
     pub fn set_state(&self, name: &str, state: ModuleState) -> Result<()> {
         let conn = self.pool.get().unwrap();
-        conn.execute(
+        let rows_affected = conn.execute(
             "UPDATE module_states
              SET state = ?1
              WHERE module_id = (SELECT id FROM modules WHERE name = ?2)",
             params![state.to_string(), name],
         )?;
+        if rows_affected == 0 {
+            return Err(eyre::eyre!("Module not found"));
+        }
         Ok(())
     }
 

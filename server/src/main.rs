@@ -7,7 +7,7 @@ use axum::{
 use eyre::Result;
 use serde::Deserialize;
 use std::sync::Arc;
-use tracing::info;
+use tracing::{error, info};
 use xxfunc_db::{ModuleDatabase, ModuleState};
 
 async fn deploy(
@@ -46,9 +46,10 @@ async fn start(
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
     info!("Starting module: {}", info.module);
-    module_db
-        .set_state(&info.module, ModuleState::Started)
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    module_db.set_state(&info.module, ModuleState::Started).map_err(|e| {
+        error!("Failed to set module state: {}", e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })?;
     info!("Module '{}' started successfully", info.module);
     Ok(info.module)
 }
@@ -58,9 +59,10 @@ async fn stop(
     module_db: Arc<ModuleDatabase>,
 ) -> Result<String, StatusCode> {
     info!("Stopping module: {}", info.module);
-    module_db
-        .set_state(&info.module, ModuleState::Stopped)
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    module_db.set_state(&info.module, ModuleState::Stopped).map_err(|e| {
+        error!("Failed to set module state: {}", e);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })?;
     info!("Module '{}' stopped successfully", info.module);
     Ok(info.module)
 }
