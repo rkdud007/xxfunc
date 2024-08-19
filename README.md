@@ -25,9 +25,10 @@ check out [example](./example/)
 #![no_main]
 
 #[xxfunc::main]
-fn main() {
-    println!("🦀 Hello, world from wasi!, exex notification data length: {}", data.len());
+async fn main(data: &[u8]) {
+    println!("🦀 Hello, world from wasi!, exex notification data: {:?}", data);
 }
+
 
 ```
 
