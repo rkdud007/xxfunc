@@ -1,0 +1,9 @@
+[package]
+name = "async"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+xxfunc = { path = "../../xxfunc" }
+tokio = { version = "1", features = ["rt", "time"] }

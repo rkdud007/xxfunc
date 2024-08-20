@@ -127,7 +127,7 @@ impl ModuleDatabase {
     pub fn create_test_db() -> Result<Self> {
         let temp_file = tempfile::NamedTempFile::new()?.into_temp_path().with_extension("db");
         let db = ModuleDatabase::open(&temp_file)?;
-        let bytes = include_bytes!("../../example/wasm_output/output.wasm");
+        let bytes = include_bytes!("../../examples/minimal/wasm_output/output.wasm");
         db.insert("test_module", bytes)?;
         Ok(db)
     }

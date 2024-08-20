@@ -7,7 +7,7 @@ We compile arbitrary code to `WASI` module and when exex hook is triggered, it w
 
 ## Motivation
 
-Not many people able to run/manage their own node. But yes many people want to run logic on top. That was motivation of `serverless function` invention. We wanted to give same ability for Ethereum full node.
+Not many people are able to run or manage their own node. However, many people want to run logic on top of the resource. This was the motivation behind the invention of ["serverless functions"](https://en.wikipedia.org/wiki/Serverless_computing). We wanted to provide the same ability for Ethereum full nodes.
 
 ## Architecture
 
@@ -67,6 +67,12 @@ ETHERSCAN_API_KEY={ETHERSCAN_API_KEY} cargo run -p xxfunc-exex -- node --debug.e
 ```console
 ./scripts/build_run_module.sh
 ```
+
+## Support
+
+- [x] `cargo xxfunc` support `build`, `deploy`, `start` and `stop`
+- [x] #[xxfunc::main] support async main function
+- [x] db, server, exex, scheduler
 
 ## TODO:
 
