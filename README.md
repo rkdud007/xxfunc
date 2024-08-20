@@ -34,10 +34,12 @@ async fn main(data: &[u8]) {
 
 ## Demo
 
+![](.github/demo.gif)
+
 terminal 1 (server)
 
 ```
-RUST_LOG=info cargo run -p server
+RUST_LOG=info cargo run -p xxfunc-server
 ```
 
 terminal 2 (user)
