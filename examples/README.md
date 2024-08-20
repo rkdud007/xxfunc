@@ -1,4 +1,7 @@
-# example
+# examples
+
+- [minimal](./minimal/)
+- [async](./async/)
 
 ## `#[xxfunc::main]` macro
 
