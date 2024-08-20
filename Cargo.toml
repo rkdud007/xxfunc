@@ -9,7 +9,7 @@ members = [
 	"cargo-xxfunc",
 	"server",
 ]
-exclude = ["example"]
+exclude = ["examples"]
 
 [workspace.package]
 version = "0.0.0"
