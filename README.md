@@ -19,7 +19,7 @@ Not many people are able to run or manage their own node. However, many people w
 
 ## Define serverless function
 
-check out [example](./example/)
+check out [example](./examples/)
 
 ```
 #![no_main]
