@@ -38,6 +38,8 @@ struct Inner {
 }
 
 impl Runtime for WasmRuntime {
+    type ExecutionResult = ();
+
     fn new(module_db: ModuleDatabase) -> Result<Self> {
         let num_workers = thread::available_parallelism()?.get();
         let runner = ModuleRunner::new()?;

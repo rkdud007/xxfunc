@@ -6,6 +6,8 @@ use reth_exex_types::ExExNotification;
 use xxfunc_db::{ModuleDatabase, ModuleId};
 
 pub trait Runtime {
+    type ExecutionResult;
+
     fn new(db: ModuleDatabase) -> Result<Self>
     where
         Self: std::marker::Sized;
@@ -14,7 +16,7 @@ pub trait Runtime {
         &self,
         module_id: ModuleId,
         exex_notification: Arc<ExExNotification>,
-    ) -> JoinHandle<Result<()>>;
+    ) -> JoinHandle<Result<Self::ExecutionResult>>;
 
     fn get_db(&self) -> &ModuleDatabase;
 

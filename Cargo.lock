@@ -11001,6 +11001,7 @@ dependencies = [
 name = "xxfunc-runtime"
 version = "0.0.0"
 dependencies = [
+ "boa_engine",
  "clap",
  "eyre",
  "futures",
