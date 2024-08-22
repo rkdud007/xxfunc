@@ -4,6 +4,8 @@ use reth_execution_types::Chain;
 use reth_exex::ExExNotification;
 use tokio::{sync::mpsc, time};
 use tracing::info;
+use xxfunc_db::ModuleDatabase;
+use xxfunc_runtime::{runtime::Runtime, wasm::runtime::WasmRuntime};
 
 use super::{
     rpc::{ExExRpcExt, ExExRpcExtApiServer},
@@ -26,8 +28,9 @@ pub fn init_reth() -> eyre::Result<()> {
             .install_exex("xx", |mut ctx| async {
                 // override notification receiver
                 ctx.notifications = notification_receiver;
-
-                Ok(Scheduler::new(ctx)?.start())
+                let db = ModuleDatabase::open("module.db")?;
+                let runtime = WasmRuntime::new(db.clone())?;
+                Ok(Scheduler::new(ctx, runtime)?.start())
             })
             .launch()
             .await?;

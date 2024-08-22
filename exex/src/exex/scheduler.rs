@@ -4,22 +4,18 @@ use eyre::Result;
 use jsonrpsee::tracing::info;
 use reth_exex::{ExExContext, ExExNotification};
 use reth_node_api::FullNodeComponents;
-use xxfunc_db::{ModuleDatabase, ModuleId, ModuleState};
+use xxfunc_db::{ModuleId, ModuleState};
 use xxfunc_runtime::runtime::Runtime;
 
-pub struct Scheduler<N: FullNodeComponents> {
+pub struct Scheduler<N: FullNodeComponents, R: Runtime> {
     // handle to the runtime where tasks can be queued
-    runtime: Runtime,
-    db: ModuleDatabase,
+    runtime: R,
     exex_ctx: ExExContext<N>,
 }
 
-impl<N: FullNodeComponents> Scheduler<N> {
-    pub fn new(exex_ctx: ExExContext<N>) -> Result<Self> {
-        let db = ModuleDatabase::open("module.db")?;
-        let runtime = Runtime::new(db.clone())?;
-
-        Ok(Self { runtime, exex_ctx, db })
+impl<N: FullNodeComponents, R: Runtime> Scheduler<N, R> {
+    pub fn new(exex_ctx: ExExContext<N>, runtime: R) -> Result<Self> {
+        Ok(Self { runtime, exex_ctx })
     }
 
     pub async fn start(mut self) -> Result<()> {
@@ -55,6 +51,6 @@ impl<N: FullNodeComponents> Scheduler<N> {
 
     // retrieves all the active (ie started) modules from the database
     fn get_active_modules(&self) -> Result<Vec<ModuleId>> {
-        self.db.get_modules_by_state(ModuleState::Started)
+        self.runtime.get_db().get_modules_by_state(ModuleState::Started)
     }
 }

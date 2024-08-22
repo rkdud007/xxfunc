@@ -1,11 +1,11 @@
-use std::fs::File;
-
 use eyre::{eyre, ContextCompat, Result};
-use serde_json;
+
 use wasmtime::{
     Config, Engine, Instance, Linker, Memory, Module as WasmModule, Store, WasmBacktraceDetails,
 };
-use wasmtime_wasi::{preview1, DirPerms, FilePerms, OutputFile};
+use wasmtime_wasi::preview1;
+
+pub mod runtime;
 
 type AllocParams = (u64,);
 type AllocReturn = u64;
